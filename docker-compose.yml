@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  todo-server:
+    image: node:18-alpine3.15
+    env_file:
+      - .env
+    container_name: ${COMPOSE_PROJECT_NAME}.todo-server
+    ports:
+      - ${PORT}:${PORT}
+    extra_hosts:
+      - "0.0.0.0:0.0.0.0"
+    volumes:
+      - ./app:/app
+    working_dir: /app
+    user: "root"
+    tty: true
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_TEST_NAME=${DB_TEST_NAME}
+      - DB_NAME=${DB_NAME}
+      - PORT=${PORT}
+      - APP_MODE=${APP_MODE}
+    command: ash -c "chown -R root:root . && npm install &&  npm run dev"
+    networks:
+      dockernet: null
+
+networks:
+  dockernet:
+    external: true
+    name: dockernet
